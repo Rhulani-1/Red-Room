@@ -1,0 +1,18 @@
+# RED RXXM
+
+> A bold, location-aware social platform for creators and connectors. Discover people within 50km, go live, host hangouts, and monetize with the in-app RED BUSKET wallet.
+
+RED RXXM is a mobile-first social hybrid mixing feeds, live streaming, premium groups, and proximity-based meetups. Creators can paywall posts, run subscriptions, and accept payments via PayFast (South Africa).
+
+## Pages
+
+- [Feed](/): Home feed with Following, For You, and Discover tabs.
+- [Discover](/discover): Trending creators and content from across the platform.
+- [Near Me](/near-me): Find users within 50km, live now, and hangout requests.
+- [Groups](/groups): WhatsApp-style premium groups gated by subscription or pass.
+- [Create](/create): Publish images, videos, text, or reposts.
+- [Messages](/messages): Direct messages with other users.
+- [Profile](/profile): Your public profile, posts, and series.
+- [RED BUSKET Wallet](/wallet): In-app wallet for deposits, spends, and transfers.
+- [Install](/install): Install RED RXXM as a PWA on iOS, Android, or desktop.
+- [Sign in](/auth): Authenticate with email or Google.
