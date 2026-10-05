@@ -21,7 +21,10 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
 AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
-    WHERE user_id = _user_id AND role = _role::text
+    -- Both sides are public.app_role. The previous `_role::text` cast produced
+    -- `app_role = text`, for which Postgres has no operator, so this function
+    -- failed to create and every admin policy that calls it was dead.
+    WHERE user_id = _user_id AND role = _role
   )
 $$;
 

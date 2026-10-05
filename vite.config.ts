@@ -37,7 +37,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   esbuild: {
-    drop: mode === "production" ? ["console", "debugger"] : [],
+    // Drop debug noise, but KEEP console.warn/error in production. Dropping the
+    // whole console also removed genuine diagnostics — a malformed Sentry DSN or an
+    // unrecognised origin then failed silently in the one environment where you most
+    // need to be told. Chatty logs go, signals stay.
+    drop: mode === "production" ? ["debugger"] : [],
+    pure: mode === "production" ? ["console.log", "console.debug", "console.info", "console.trace"] : [],
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
