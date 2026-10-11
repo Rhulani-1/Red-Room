@@ -157,6 +157,7 @@ const NearMe = () => {
         id: p.user_id,
         username: p.username ?? p.display_name ?? "unknown",
         avatar: p.avatar_url ?? "https://i.pravatar.cc/100",
+        bio: p.bio ?? "",
         distance,
         availability: (p.availability as AvailabilityType) ?? "public",
         hangoutType: (p.price_rands && p.price_rands > 0) ? "paid" : "free",

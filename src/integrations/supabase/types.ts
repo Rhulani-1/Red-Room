@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       agreement_payment_confirmations: {
@@ -334,33 +309,42 @@ export type Database = {
       meetups: {
         Row: {
           created_at: string
+          currency: string | null
           guest_id: string
           host_id: string
           id: string
           location: string | null
           notes: string | null
+          payment_method: string | null
+          price_rands: number | null
           scheduled_at: string | null
           status: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          currency?: string | null
           guest_id: string
           host_id: string
           id?: string
           location?: string | null
           notes?: string | null
+          payment_method?: string | null
+          price_rands?: number | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          currency?: string | null
           guest_id?: string
           host_id?: string
           id?: string
           location?: string | null
           notes?: string | null
+          payment_method?: string | null
+          price_rands?: number | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
@@ -648,6 +632,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          availability: string | null
           avatar_url: string | null
           average_rating: number
           bio: string | null
@@ -660,6 +645,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          availability?: string | null
           avatar_url?: string | null
           average_rating?: number
           bio?: string | null
@@ -672,6 +658,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          availability?: string | null
           avatar_url?: string | null
           average_rating?: number
           bio?: string | null
@@ -803,21 +790,21 @@ export type Database = {
       }
       user_roles: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
-          role: string
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
-          role: string
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
-          role?: string
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -905,15 +892,13 @@ export type Database = {
         Args: { _group_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["group_role"]
       }
-      has_role:
-        | {
-            Args: {
-              _role: Database["public"]["Enums"]["app_role"]
-              _user_id: string
-            }
-            Returns: boolean
-          }
-        | { Args: { _role: string; _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
@@ -1053,9 +1038,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],

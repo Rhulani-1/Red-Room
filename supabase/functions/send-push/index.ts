@@ -70,7 +70,7 @@ serve(async (req) => {
         .eq("user_id", userId)
         .maybeSingle();
       // Absent row means defaults, which are on. Only an explicit false opts out.
-      if (prefs && (prefs as Record<string, boolean>)[column] === false) {
+      if (prefs && (prefs as unknown as Record<string, boolean>)[column] === false) {
         return new Response(JSON.stringify({ sent: 0, skipped: "user opted out" }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });

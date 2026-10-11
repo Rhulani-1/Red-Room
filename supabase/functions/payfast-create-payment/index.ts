@@ -119,7 +119,7 @@ function md5(string: string): string {
     return s;
   }
   function add32(a: number, b: number) { return (a + b) & 0xFFFFFFFF; }
-  function hex(x: number[]) { for (let i = 0; i < x.length; i++) x[i] = rhex(x[i]); return (x as unknown as string[]).join(''); }
+  function hex(x: number[]) { for (let i = 0; i < x.length; i++) (x as unknown as string[])[i] = rhex(x[i]); return (x as unknown as string[]).join(''); }
   return hex(md51(string));
 }
 

@@ -29,7 +29,9 @@ const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const raw = atob(base64);
-  const output = new Uint8Array(raw.length);
+  // Typed as ArrayBuffer-backed so it satisfies BufferSource (a plain
+  // Uint8Array could wrap a SharedArrayBuffer, which the DOM types reject).
+  const output: Uint8Array<ArrayBuffer> = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i++) output[i] = raw.charCodeAt(i);
   return output;
 };

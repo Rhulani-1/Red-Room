@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useSensitivePref, type SensitivePref } from "@/hooks/useSensitivePref";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -209,7 +210,10 @@ const SettingsSheet = ({ open, onOpenChange, onProfileUpdated }: SettingsSheetPr
 
     const dbCol = NOTIF_DB_COL[k];
     if (dbCol && user) {
-      const updatePatch: Record<string, boolean> = { [dbCol]: v };
+      const updatePatch: Partial<Pick<
+        Database["public"]["Tables"]["notification_preferences"]["Update"],
+        "notif_likes" | "notif_comments" | "notif_follows" | "notif_messages" | "notif_live"
+      >> = { [dbCol]: v };
       const { error } = await supabase
         .from("notification_preferences")
         .update(updatePatch)
