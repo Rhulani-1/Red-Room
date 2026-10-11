@@ -29,7 +29,7 @@ export const VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS = requiredEnv("VITE_OAUTH_REDIR
 export const validateRuntimeEnv = () => {
   if (typeof window === "undefined") return;
   const origin = window.location.origin;
-  if (!VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS.includes(origin)) {
+  if (!VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS.some((entry) => originMatches(origin, entry))) {
     console.warn(
       `This origin (${origin}) is not in VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS. ` +
         `The app will run, but OAuth sign-in will be refused from here. ` +
@@ -38,11 +38,42 @@ export const validateRuntimeEnv = () => {
   }
 };
 
-/** Strict, exact-origin match. Never loosen this: it is the open-redirect guard. */
+/**
+ * Matches an origin against one allow-list entry.
+ *
+ * Exact match unless the entry contains `*`, which stands for one or more
+ * characters inside the host only. This exists because Vercel mints a new origin
+ * for every deployment, so an exact list can never keep up — but the pattern must
+ * stay narrow enough to be a real boundary. `https://*-myteam.vercel.app` is scoped
+ * to one Vercel account; `https://*.vercel.app` would let anyone who can deploy
+ * there receive a sign-in redirect, so keep the account suffix in the pattern.
+ *
+ * Deliberate restrictions: the scheme is never wildcarded, `*` cannot match a `/`
+ * (so it can't reach into the path), and a bare `*` is refused outright.
+ */
+const originMatches = (origin: string, pattern: string): boolean => {
+  if (!pattern.includes("*")) return origin === pattern;
+  if (pattern === "*" || pattern === "https://*" || pattern === "http://*") return false;
+
+  const escaped = pattern
+    .split("*")
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("[^/]+");
+
+  return new RegExp(`^${escaped}$`).test(origin);
+};
+
+/**
+ * The open-redirect guard. Loosen only through the wildcard rules above — an
+ * attacker-controlled origin here means a sign-in token handed to the attacker.
+ */
 export const isValidOAuthRedirect = (redirectUrl: string) => {
   try {
     const url = new URL(redirectUrl);
-    return VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS.includes(url.origin);
+    if (url.protocol !== "https:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
+      return false;
+    }
+    return VITE_OAUTH_REDIRECT_ALLOWED_ORIGINS.some((entry) => originMatches(url.origin, entry));
   } catch {
     return false;
   }
